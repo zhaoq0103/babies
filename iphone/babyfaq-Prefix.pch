@@ -1,0 +1,54 @@
+//
+// Prefix header for all source files of the 'babyfaq' target in the 'babyfaq' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_3_0
+#warning "This project uses features only available in iOS SDK 3.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+
+
+#ifndef MW_STRONG
+#if __has_feature(objc_arc)
+#define MW_STRONG strong
+#else
+#define MW_STRONG retain
+#endif
+#endif
+
+#ifndef MW_WEAK
+#if __has_feature(objc_arc_weak)
+#define MW_WEAK weak
+#elif __has_feature(objc_arc)
+#define MW_WEAK unsafe_unretained
+#else
+#define MW_WEAK assign
+#endif
+#endif
+
+#if __has_feature(objc_arc)
+#define MW_AUTORELEASE(exp) exp
+#define MW_RELEASE(exp) exp
+#define MW_RETAIN(exp) exp
+#else
+#define MW_AUTORELEASE(exp) [exp autorelease]
+#define MW_RELEASE(exp) [exp release]
+#define MW_RETAIN(exp) [exp retain]
+#endif
+
+#ifdef DEBUG
+#  define LOG(...) NSLog(__VA_ARGS__)
+#  define LOG_CURRENT_METHOD NSLog(NSStringFromSelector(_cmd))
+#else
+#  define LOG(...);
+#  define LOG_CURRENT_METHOD ;
+#endif
+
+
+
+#endif
