@@ -7,7 +7,9 @@
 //
 
 #import "RootViewController.h"
+#import "TutorSectionModel.h"
 
 @interface DetailsViewController : RootViewController
-
+@property (nonatomic, retain)SectionModel*          secModel;
+@property (retain, nonatomic) IBOutlet UITextView *detailLabel;
 @end

@@ -27,6 +27,11 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     _searchBar.hidden = YES;
+    
+    NSString* text = self.secModel.text;
+    if (text != nil  && text.length > 0) {
+        self.detailLabel.text = text;
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -48,4 +53,12 @@
     //do nothing
 }
 
+- (void)dealloc {
+    [_detailLabel release];
+    [super dealloc];
+}
+- (void)viewDidUnload {
+    [self setDetailLabel:nil];
+    [super viewDidUnload];
+}
 @end

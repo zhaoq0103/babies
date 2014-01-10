@@ -7,6 +7,7 @@
 //
 
 #import "TasksViewController.h"
+#import "TaskModel.h"
 
 @interface TasksViewController ()
 
@@ -47,4 +48,61 @@
 {
     //do nothing
 }
+
+
+#pragma mark - UITableViewDelegate
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 50;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 50;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    TaskModel* model = [self.tasksData objectAtIndex:section];
+    return model.tasksData.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    int sec = indexPath.section;
+    int row = indexPath.row;
+    
+    static NSString *userIdentifier = @"taskcell";
+    UITableViewCell* cell = (UITableViewCell*)[tableView dequeueReusableCellWithIdentifier:userIdentifier];
+    if (cell==nil)
+    {
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:userIdentifier] autorelease];
+    }
+
+    TaskModel* model = [self.tasksData objectAtIndex:sec];
+    TaskDetailModel* dModel = [model.tasksData objectAtIndex:row];
+    
+    cell.textLabel.text = dModel.name;
+    
+    return  cell;
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return self.tasksData.count;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    TaskModel* model = [self.tasksData objectAtIndex:section];
+    int taskID = [model.weekID integerValue];
+    
+    return [NSString stringWithFormat:@"%d周任务", taskID];
+}
+
 @end

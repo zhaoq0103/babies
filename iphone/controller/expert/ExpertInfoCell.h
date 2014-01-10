@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "DataModel.h"
-#import "ExpertModel.h"
 
 @class ExpertInfoCell;
 

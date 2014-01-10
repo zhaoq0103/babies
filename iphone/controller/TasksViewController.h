@@ -8,6 +8,8 @@
 
 #import "RootViewController.h"
 
-@interface TasksViewController : RootViewController
+@interface TasksViewController : RootViewController<UITableViewDataSource,UITableViewDelegate>
+
+@property (nonatomic, retain) NSArray*                   tasksData;
 
 @end

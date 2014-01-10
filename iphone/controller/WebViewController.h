@@ -11,6 +11,7 @@
 {
     NSString*       _url;
     UILabel*       _webPageTitleLabel;
+    BOOL           _bGetContent;
 }
 
 @property (retain, nonatomic) IBOutlet UIWebView *web;

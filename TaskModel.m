@@ -5,28 +5,13 @@
 //  Copyright (c) 2013年 liaohy. All rights reserved.
 //
 
-#import "UserModel.h"
+#import "TaskModel.h"
 
-@implementation UserModel
-
+@implementation TaskModel
 
 - (NSDictionary *)attributeMapDictionary {
     NSDictionary *mapAtt = @{
-                             @"idstr":@"created_at",
-                             @"screen_name":@"screen_name",
-                             @"name":@"name",
-                             @"location":@"location",
-                             @"description":@"description",
-                             @"url":@"url",
-                             @"profile_image_url":@"profile_image_url",
-                             @"avatar_large":@"avatar_large",
-                             @"gender":@"gender",
-                             @"followers_count":@"followers_count",
-                             @"friends_count":@"friends_count",
-                             @"statuses_count":@"statuses_count",
-                             @"favourites_count":@"favourites_count",
-                             @"verified":@"verified",
-                             @"online_status":@"online_status"
+                             @"weekID":@"week",
                              };
     
     return mapAtt;
@@ -36,20 +21,45 @@
     //将字典数据根据映射关系填充到当前对象的属性上。
     [super setAttributes:dataDic];
     
-    
-//    NSDictionary *retweetDic = [dataDic objectForKey:@"retweeted_status"];
-//    if (retweetDic != nil) {
-//        WeiboModel *relWeibo = [[WeiboModel alloc] initWithDataDic:retweetDic];
-//        self.relWeibo = relWeibo;
-//        [relWeibo release];
-//    }
-//    
-//    NSDictionary *userDic = [dataDic objectForKey:@"user"];
-//    if (userDic != nil) {
-//        UserModel *user = [[UserModel alloc] initWithDataDic:userDic];
-//        self.user = user;
-//        [user release];
-//    }
+    NSArray *secArray = [dataDic objectForKey:@"weektask"];
+    if (secArray != nil && [secArray isKindOfClass:[NSArray class]] && secArray.count > 0) {
+        self.tasksData = [[NSMutableArray alloc] initWithCapacity:secArray.count];
+        for (NSDictionary* secDic in secArray) {
+            TaskDetailModel* secModel = [[TaskDetailModel alloc] initWithDataDic:secDic];
+            [_tasksData addObject:secModel];
+            [secModel release];
+        }
+    }
 }
 
+- (void)dealloc
+{
+    self.weekID = nil;
+    self.tasksData = nil;
+    
+    [super dealloc];
+}
+
+@end
+
+
+//task detail
+@implementation TaskDetailModel
+
+- (NSDictionary *)attributeMapDictionary {
+    NSDictionary *mapAtt = @{
+                             @"name":@"name",
+                             @"detail":@"detail",
+                             };
+    
+    return mapAtt;
+}
+
+- (void)dealloc
+{
+    self.name = nil;
+    self.detail = nil;
+    
+    [super dealloc];
+}
 @end
