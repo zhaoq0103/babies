@@ -1,11 +1,32 @@
 {
     "task":[
+        {
+        "week":0,
+        "weektask":[
+        {
+            "name":"准备怀孕啦",
+            "detail":"锻炼身体吧，戒烟戒酒吧"
+        },
+        {
+            "name":"女人要这么做",
+            "detail":"怎么做？"
+        },
+        {
+            "name":"男人要这么做",
+            "detail":"怎么做？"
+        },
+        {
+            "name":"大家一起努力",
+            "detail":"这就是两个人的事吧"
+        }
+        ]
+    },
     {
         "week":1,
         "weektask":[
         {
             "name":"准备",
-            "detail":""
+            "detail":"这周需要准备什么呢"
         },
         {
             "name":"起名",
@@ -25,19 +46,40 @@
         "week":2,
         "weektask":[
         {
-            "name":"准备",
-            "detail":""
+            "name":"要补充点营养",
+            "detail":"吃什么好呢？"
         },
         {
-            "name":"起名",
-            "detail":"叫什么好呢"
+            "name":"注意休息",
+            "detail":"按时起床"
         },
         {
-            "name":"准备待产包",
+            "name":"看看电影",
             "detail":"需要这样做...todo"
         },
         {
-            "name":"给宝宝起名字",
+            "name":"少看电视",
+            "detail":"需要这样做...todo"
+        }
+        ]
+    },
+        {
+        "week":3,
+        "weektask":[
+        {
+            "name":"还是要吃",
+            "detail":"吃什么好呢？"
+        },
+        {
+            "name":"就知道吃",
+            "detail":"按时起床"
+        },
+        {
+            "name":"不吃白不吃",
+            "detail":"需要这样做...todo"
+        },
+        {
+            "name":"你吃了我才吃",
             "detail":"需要这样做...todo"
         }
         ]
