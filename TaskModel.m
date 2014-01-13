@@ -34,8 +34,8 @@
 
 - (void)dealloc
 {
-    self.weekID = nil;
-    self.tasksData = nil;
+    OCSafeRelease(_weekID);
+    OCSafeRelease(_tasksData);
     
     [super dealloc];
 }
@@ -57,8 +57,8 @@
 
 - (void)dealloc
 {
-    self.name = nil;
-    self.detail = nil;
+    OCSafeRelease(_name);
+    OCSafeRelease(_detail);
     
     [super dealloc];
 }

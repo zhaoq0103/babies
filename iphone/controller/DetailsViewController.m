@@ -54,7 +54,8 @@
 }
 
 - (void)dealloc {
-    [_detailLabel release];
+    OCSafeRelease(_detailLabel);
+
     [super dealloc];
 }
 - (void)viewDidUnload {

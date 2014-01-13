@@ -12,6 +12,9 @@
 #import "TaskModel.h"
 
 @interface TutorTaskViewController : RootViewController<UITableViewDataSource,UITableViewDelegate>
+{
+    BOOL                                    _bTasksDataInited;
+}
 
 @property (retain, nonatomic) IBOutlet UITableView              *tutorTable;
 @property (nonatomic)         int                               pageIndex;
@@ -19,4 +22,6 @@
 @property (nonatomic, retain) TaskModel*                        curTask;
 @property (nonatomic, retain) NSMutableArray*                   tasksData;
 
+@property (nonatomic, retain) UIButton*                         prePageBtn;
+@property (nonatomic, retain) UIButton*                         nextPageBtn;
 @end

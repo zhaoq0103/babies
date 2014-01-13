@@ -28,7 +28,9 @@
     
     NSArray *secArray = [dataDic objectForKey:@"section"];
     if (secArray != nil && [secArray isKindOfClass:[NSArray class]] && secArray.count > 0) {
-        self.sectionsData = [[NSMutableArray alloc] initWithCapacity:secArray.count];
+        NSMutableArray* temp = [[NSMutableArray alloc] initWithCapacity:secArray.count];
+        self.sectionsData = temp;
+        [temp release];
         for (NSDictionary* secDic in secArray) {
             SectionModel* secModel = [[SectionModel alloc] initWithDataDic:secDic];
             [_sectionsData addObject:secModel];
@@ -39,13 +41,12 @@
 
 - (void)dealloc
 {
-    self.title = nil;
-    self.summary = nil;
-    self.text = nil;
-    self.pageID = nil;
-    
-    self.sectionsData = nil;
-    self.taskModel = nil;
+    OCSafeRelease(_title);
+    OCSafeRelease(_summary);
+    OCSafeRelease(_text);
+    OCSafeRelease(_pageID);
+    OCSafeRelease(_sectionsData);
+    OCSafeRelease(_taskModel);
     
     [super dealloc];
 }
@@ -87,14 +88,13 @@
 
 - (void)dealloc
 {
-    self.title = nil;
-    self.summary = nil;
-    self.text = nil;
-    self.sectionID = nil;
-    
-    self.tagsData = nil;
-    self.pic = nil;
-    self.picurl = nil;
+    OCSafeRelease(_title);
+    OCSafeRelease(_summary);
+    OCSafeRelease(_text);
+    OCSafeRelease(_sectionID);
+    OCSafeRelease(_tagsData);
+    OCSafeRelease(_pic);
+    OCSafeRelease(_picurl);
     
     [super dealloc];
 }
@@ -132,11 +132,10 @@
 
 - (void)dealloc
 {
-    self.title = nil;
-    self.tagID = nil;
-    self.text = nil;
-    
-    self.textData = nil;
+    OCSafeRelease(_title);
+    OCSafeRelease(_text);
+    OCSafeRelease(_tagID);
+    OCSafeRelease(_textData);
     
     [super dealloc];
 }
@@ -164,8 +163,8 @@
 
 - (void)dealloc
 {
-    self.content = nil;
-    self.url = nil;
+    OCSafeRelease(_content);
+    OCSafeRelease(_url);
     
     [super dealloc];
 }

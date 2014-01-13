@@ -11,6 +11,8 @@
 #import "DetailsViewController.h"
 #import "WebViewController.h"
 
+#define MAXTUTORPAGECOUNT           120
+
 @interface TutorTaskViewController ()
 
 @end
@@ -32,30 +34,10 @@
     _searchBar.hidden = YES;
     //handle data
     //根据时间计算出一个INDEX， 由此INDEX做参数来获取对应的文件数据
-    _pageIndex = 1;
+    _pageIndex = 0;
+    _bTasksDataInited = NO;
     
-    NSString* string = [self loadFile:[NSString stringWithFormat:@"%d.txt", _pageIndex]];
-    NSDictionary* dic = [self toJSONValue:string];
-    if ([dic isKindOfClass:[NSDictionary class]]) {
-        TutorSectionModel* model = [[TutorSectionModel  alloc] initWithDataDic:dic];
-        self.tutorModel = model;
-        [model release];
-    }
-    
-    //task
-    NSString* taskJson = [self toJSONValue:[self loadFile:@"task.json"]];
-    NSArray *taskArr = [taskJson objectForKey:@"task"];  
-    if (taskArr != nil && [taskArr isKindOfClass:[NSArray class]] && taskArr.count > 0) {
-        self.tasksData = [[NSMutableArray alloc] initWithCapacity:taskArr.count];
-        for (NSDictionary* taskDic in taskArr) {
-            TaskModel* model = [[TaskModel  alloc] initWithDataDic:taskDic];
-            [_tasksData addObject:model];
-            if ([model.weekID integerValue] == _pageIndex) {
-                self.curTask = model;
-            }
-            [model release];
-        }
-    }
+    [self loadPageData:_pageIndex];
 }
 
 
@@ -82,7 +64,18 @@
     
     //file opened
     NSData* reader = [NSData dataWithContentsOfFile:bundleFile];
+    if (reader == nil) {
+        return @"";
+    }
+    
     NSString* text = [[NSString alloc] initWithData:reader encoding:NSUTF8StringEncoding];
+    if (text == nil || text.length <= 0) {
+        if (text != nil) {
+            [text release];
+        }
+        return @"";
+    }
+    
     NSString* retval = [self cleanString:text];
     [text release];
     
@@ -194,10 +187,11 @@
 }
 
 - (void)dealloc {
-    [_tutorTable release];
-    self.tutorModel = nil;
-    self.curTask = nil;
-    self.tasksData = nil;
+    OCSafeRelease(_tutorTable);
+    OCSafeRelease(_tutorModel);
+    OCSafeRelease(_curTask);
+    OCSafeRelease(_tasksData);
+
     [super dealloc];
 }
 - (void)viewDidUnload {
@@ -335,4 +329,157 @@
     
     return @"";
 }
+
+//custom section 
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    
+    int index = self.tutorModel.sectionsData.count + 1;
+    UIView *headerViewBottom=[[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 51)] autorelease];
+    
+    if (section == 0) {//header section
+        UIImageView *backgroudImage = [[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 51)] autorelease];
+        backgroudImage.image = [UIImage imageNamed:@"home_list_highlight.png"];
+        [headerViewBottom addSubview:backgroudImage];
+        
+        UILabel *Label = [[[UILabel alloc] initWithFrame:CGRectMake(88, 14, 150, 21)] autorelease];
+        [Label setBackgroundColor:[UIColor clearColor]];
+        [Label setFont:[UIFont systemFontOfSize:18.0]];
+        Label.text = self.tutorModel.title;
+        
+        //Button and Arrow button
+        UIButton *lbtn=[UIButton buttonWithType:UIButtonTypeCustom];
+        [lbtn setImage:[UIImage imageNamed:@"arrow_left.png"] forState:UIControlStateNormal];
+        [lbtn setFrame:CGRectMake(20, 5, 50, 40)];
+        [lbtn setBackgroundColor:[UIColor clearColor]];
+        [lbtn addTarget:self action:@selector(leftMoreBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+        if (self.pageIndex <= 0) {
+            lbtn.enabled = NO;
+        }
+        self.prePageBtn = lbtn;
+        
+        //Button and Arrow button
+        UIButton *rbtn=[UIButton buttonWithType:UIButtonTypeCustom];
+        [rbtn setImage:[UIImage imageNamed:@"arrow_right.png"] forState:UIControlStateNormal];
+        [rbtn setFrame:CGRectMake(250, 5, 50, 40)];
+        [rbtn setBackgroundColor:[UIColor clearColor]];
+        [rbtn addTarget:self action:@selector(rightMoreBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+        if (self.pageIndex >= MAXTUTORPAGECOUNT) {
+            rbtn.enabled = NO;
+        }
+        self.nextPageBtn = rbtn;
+        
+        //[headerView addSubview:img];
+        [headerViewBottom addSubview:lbtn];
+        [headerViewBottom addSubview:Label];
+        [headerViewBottom addSubview:rbtn];
+    }
+    else
+    { //中间显示名字
+        UIImageView *backgroudImage = [[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 51)] autorelease];
+        backgroudImage.image = [UIImage imageNamed:@"home_list_highlight.png"];
+        [headerViewBottom addSubview:backgroudImage];
+        
+        UILabel *Label = [[[UILabel alloc] initWithFrame:CGRectMake(88, 14, 180, 21)] autorelease];
+        [Label setBackgroundColor:[UIColor clearColor]];
+        [Label setFont:[UIFont systemFontOfSize:18.0]];
+        
+        //tab_select.png
+        if (section < index)
+        {
+            SectionModel* model = [self.tutorModel.sectionsData objectAtIndex:section-1];
+            if (model) {
+                Label.text = model.title;
+            }
+        }
+        else //task section
+        {
+            Label.text = @"本期任务";
+        }
+        
+        [headerViewBottom addSubview:Label];
+    }
+    
+	return headerViewBottom;
+}
+
+-(void)leftMoreBtnClicked:(id)sender{
+    NSLog(@"leftMoreBtnClicked");
+    BOOL result = [self loadPageData:_pageIndex-1];
+    if (result) {
+        _pageIndex -= 1;
+        if (_pageIndex <= 0) {
+            ((UIButton*)sender).enabled = NO;
+        }
+        if (_pageIndex < MAXTUTORPAGECOUNT && !self.nextPageBtn.isEnabled) {
+            self.nextPageBtn.enabled = YES;
+        }
+        
+        [self.tutorTable reloadData];
+    }
+}
+
+
+-(void)rightMoreBtnClicked:(id)sender{
+    NSLog(@"rightMoreBtnClicked");
+    
+    BOOL result = [self loadPageData:_pageIndex+1];
+    if (result) {
+        _pageIndex += 1;
+        if (_pageIndex >= MAXTUTORPAGECOUNT) {
+            ((UIButton*)sender).enabled = NO;
+        }
+        if (_pageIndex > 0 && !self.prePageBtn.isEnabled) {
+            self.prePageBtn.enabled = YES;
+        }
+        
+        [self.tutorTable reloadData];
+    }
+}
+
+- (BOOL) loadPageData:(int)pageIndex
+{
+    
+    NSString* string = [self loadFile:[NSString stringWithFormat:@"%d.txt", pageIndex]];
+    
+    if (string.length <= 0) { //load file fail
+        return NO;
+    }
+    
+    NSDictionary* dic = [self toJSONValue:string];
+    if ([dic isKindOfClass:[NSDictionary class]]) {
+        TutorSectionModel* model = [[TutorSectionModel  alloc] initWithDataDic:dic];
+        self.tutorModel = model;
+        [model release];
+    }
+    
+    //task
+    if ( !_bTasksDataInited) {
+        NSString* taskString = [self loadFile:@"task.json"];
+        if (taskString.length >= 0) {
+            NSString* taskJson = [self toJSONValue:taskString];
+            NSArray *taskArr = [taskJson objectForKey:@"task"];
+            if (taskArr != nil && [taskArr isKindOfClass:[NSArray class]] && taskArr.count > 0) {
+                NSMutableArray* datas = [[NSMutableArray alloc] initWithCapacity:taskArr.count];
+                self.tasksData = datas;
+                [datas release];
+                for (NSDictionary* taskDic in taskArr) {
+                    TaskModel* model = [[TaskModel  alloc] initWithDataDic:taskDic];
+                    [_tasksData addObject:model];
+                    [model release];
+                }
+            }
+            
+            _bTasksDataInited = YES;
+        }
+    }
+
+    
+    //cur task
+    TaskModel* model = [self.tasksData objectAtIndex:pageIndex];
+    if ([model.weekID integerValue] == pageIndex) {
+        self.curTask = model;
+    }
+    return YES;
+}
+
 @end

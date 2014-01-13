@@ -1,6 +1,7 @@
 //  所有对象实体的基类
 
 #import <Foundation/Foundation.h>
+#import "defines.h"
 
 @interface BaseModel : NSObject <NSCoding>{
 

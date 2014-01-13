@@ -49,6 +49,12 @@
     //do nothing
 }
 
+- (void)dealloc
+{
+    OCSafeRelease(_tasksData);
+    
+    [super dealloc];
+}
 
 #pragma mark - UITableViewDelegate
 

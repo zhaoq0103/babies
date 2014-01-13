@@ -7,6 +7,7 @@
 
 #import "WebViewController.h"
 #import "RegexKitLite.h"
+#import "defines.h"
 
 @interface WebViewController ()
 
@@ -88,11 +89,10 @@
 
 
 - (void)dealloc {
-    _web.delegate = nil;
-    [_web stopLoading];
-    [_web release];
-    [_url release];
-    
+    OCSafeRelease(_web.delegate);
+    OCSafeRelease(_web);
+    OCSafeRelease(_url);
+
     [super dealloc];
 }
 - (void)viewDidUnload {

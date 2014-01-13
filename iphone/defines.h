@@ -321,7 +321,7 @@ extern NSString* Key_CustomWeatherCityID;
 
 /****************************End of UMeng tongji*********************************************************************************/
 
-
+#define  OCSafeRelease(__v)          if((__v) != nil){[(__v) release]; (__v) = nil;}
 
 
 
